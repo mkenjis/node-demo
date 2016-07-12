@@ -12,10 +12,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
-function logArrayElements(element, index, array) {
-    console.log("a[" + index + "] = " + element.first_name);
-}
-
 app
 .get('/help', function(req,res) {
     res.send('This is Help page');
