@@ -55,7 +55,7 @@ app
 })
 .post('/users', function(req,res) {
     var user = req.body;
-    
+    res.send('POST action');    
 //    global.db.each("select count(*) as cnt from user_info where user_email = '" + user.user_email + "'", 
 //        function(err, row) {
 //            if (row.cnt > 0) {
