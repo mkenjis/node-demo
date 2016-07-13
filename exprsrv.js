@@ -6,6 +6,9 @@ const PORT = 8081;
 var express = require('express');
 var app = express();
 
+var path = require('path');
+staticpath = path.resolve( __dirname + '/views');
+
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -21,6 +24,9 @@ app
 })
 .get('/contact', function(req,res) {
     res.send('This is Contact page');
+})
+.get('/', function(req,res) {
+  res.sendFile(staticpath + '/home.html');
 })
 .get('/users/show', function(req,res){
     var i = 0;
@@ -68,9 +74,58 @@ app
     global.db.each("select first_name,last_name,user_email from user_info", function(err,row) {
         console.log('User = '+row.first_name + ',' + row.last_name);
     })
-    //console.log(global.db);
 })
-
+.get('/users/:id/edit', function(req,res) {
+    curr = req.params.id;
+    global.db.each("select first_name,last_name,user_email from user_info where user_email='"+curr+"'", 
+        function(err,row) {
+            res.render('edit', { iduser: row.user_email,
+                       prinome: row.first_name,
+                       ultnome: row.last_name });
+        });
+})
+.post('/users/:id', function(req,res) {
+    var user = req.body;
+    var curr = req.params.id;
+    global.db.each("select count(*) as cnt from user_info where user_email = '" + curr + "'", 
+        function(err, row) {
+            if (row.cnt == 0) {
+                res.writeHead(200, {'Content-type':'text/html'});
+                res.end('User does not exist');
+                console.log("User does not exist");
+            } else {
+                global.db.run('begin transaction');
+                global.db.run("update user_info set first_name = ?, last_name = ? where user_email = '" + curr + "'",
+                        user.first_name,user.last_name);
+                global.db.run('end');
+                
+                res.writeHead(200, {'Content-type':'text/html'});
+                res.end('User successfully updated');
+                console.log("User successfully updated");
+            }
+        })
+    //res.redirect('/');
+})
+.get('/users/:id/delete', function(req,res) {
+    var curr = req.params.id;
+    global.db.each("select count(*) as cnt from user_info where user_email = '" + curr + "'", 
+        function(err, row) {
+            if (row.cnt == 0) {
+                res.writeHead(200, {'Content-type':'text/html'});
+                res.end('User does not exist');
+                console.log("User does not exist");
+            } else {
+                global.db.run('begin transaction');
+                global.db.run("delete from user_info where user_email = '" + curr + "'");
+                global.db.run('end');
+                
+                res.writeHead(200, {'Content-type':'text/html'});
+                res.end('User successfully deleted');
+                console.log("User successfully deleted");
+            }
+        })
+    //res.redirect('/');
+})
 
 app.use(function(req,res,next) {
     console.log('new request');
