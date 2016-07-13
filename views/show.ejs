@@ -1,5 +1,16 @@
-User list <br>
-<% global.userList.forEach(function(user) { %>
-   <%= console.log(user.first_name) %>
-   <%= user.last_name %>, <%= user.first_name %>, <%= user.user_email %> <br>
-<% }) %>
+<html>
+  <head>
+  </head>
+  <body>
+    <table class="table table-stripped">
+      <thead><tr><th>User</th><th>Option</th></thead>
+      <tbody>User list <br>
+      <% global.userList.forEach(function(user) { %>
+         <%= console.log(user.first_name) %>
+         <tr><th><%= user.last_name %>, <%= user.first_name %>, <%= user.user_email %></th>
+         <th><a href=/users/<%= user.user_email %>/edit>Edit</a>  <a href=/users/<%= user.user_email %>/delete>Delete</a></th></tr>
+      <% }) %>
+      </tbody>
+    </table>
+  </body>
+</html>
