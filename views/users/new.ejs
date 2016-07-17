@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <% include ../partials/shim %>
+</head>
+<body>
+    <% include ../partials/header %>
+    <h2>New User</h2>
+    <br/>
+    <div class="container">
+    <form action="/users" method="POST">
+        First Name: <input type="text" name="first_name">  <br>
+        
+        Last Name: <input type="text" name="last_name"> <br>
+        
+        Email: <input type="email" name="user_email">
+        <div>
+        <input type="submit" value="Submit">
+        <a class='btn btn-sm btn-default' href='/users/show'>Cancel</a>
+        </div>
+    </form>
+    </div>
+    <% include ../partials/footer %>
+</body>
+</html>
