@@ -5,17 +5,19 @@ const PORT = 8081;
 var express = require('express');
 var app = express();
 
-var bodyParser = require('body-parser');
-app.use(bodyParser.urlencoded({ extended: false }));
-
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
-var flash = require('express-flash');
-var cookieSession = require('cookie-session');
+var bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: false }));
+var validator = require('express-validator');
+app.use(validator());
+
 var cookieParser = require('cookie-parser');
 app.use(cookieParser('keyboard cat'));
+var cookieSession = require('cookie-session');
 app.use(cookieSession({ key: 'key', secret: 'my secret code'}));
+var flash = require('express-flash');
 app.use(flash());
 
 var path = require('path');
@@ -45,16 +47,16 @@ app
 .post('/users/:id', users.update)
 .get('/users/:id/delete', users.delete) 
 
-app.use(function(req,res,next) {
-    console.log('new request');
-    next();
-})
+//app.use(function(req,res,next) {
+//    console.log('new request');
+//    next();
+//})
 
-app.use(function(req,res) {
-    res.writeHead(200, {'Content-type':'text/html'})
-    res.end('Hello world')
-    console.log('nothing processed');
-})
+//app.use(function(req,res) {
+//    res.writeHead(200, {'Content-type':'text/html'})
+//    res.end('Hello world')
+//    console.log('nothing processed');
+//})
 
 app.listen(PORT);
 
