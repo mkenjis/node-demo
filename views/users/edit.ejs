@@ -11,12 +11,18 @@
     <form action="/users/<%= iduser %>" method="POST">
         First Name: <input type="text" name="first_name" value="<%= prinome %>">  <br>
         
-        Last Name: <input type="text" name="last_name" value="<%= ultnome %>">
+        Last Name: <input type="text" name="last_name" value="<%= ultnome %>"> <br>
+        
+        Password: <input type="password" name="user_password" value="<%= pwduser %>">
         <div>
         <input type="submit" value="Submit">
         <a class='btn btn-sm btn-default' href='/users/show'>Cancel</a>
         </div>
     </form>
+    <p></p>
+    <% errors.forEach(function(error) { %>
+        <p style="color:red"><%= error.msg %> </p>
+    <% }) %>
     </div>
     <% include ../partials/footer %>
 </body>

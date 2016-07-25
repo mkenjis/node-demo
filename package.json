@@ -1,5 +1,5 @@
 {
-  "name": "handson1",
+  "name": "node-demo",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -12,11 +12,11 @@
     "body-parser": "^1.15.2",
     "cookie-parser": "^1.4.3",
     "cookie-session": "^2.0.0-alpha.1",
+    "crypto": "0.0.3",
     "ejs": "^2.4.2",
     "express": "^4.14.0",
     "express-flash": "0.0.2",
-    "net": "^1.0.2",
-    "path": "^0.12.7",
-    "sqlite3": "^3.1.4"
+    "express-validator": "^2.20.8",
+    "net": "^1.0.2"
   }
 }
