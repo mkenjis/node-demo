@@ -17,6 +17,7 @@
     "express": "^4.14.0",
     "express-flash": "0.0.2",
     "express-validator": "^2.20.8",
-    "net": "^1.0.2"
+    "net": "^1.0.2",
+    "sqlite3": "^3.1.4"
   }
 }

@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <% include ../partials/shim %>
+</head>
+<body>
+    <% include ../partials/header %>
+    <h2>Log In</h2> <br/>
+
+    <div class="container">
+    <form action="/sessions" method="POST">
+        Email: <input type="email" name="user_email"> <br>
+        
+        Password: <input type="password" name="user_password">
+        <div>
+        <input type="submit" value="Submit">
+        <a class='btn btn-sm btn-default' href='/users/show'>Cancel</a>
+        </div>
+    </form>
+    <p></p>
+    <% errors.forEach(function(error) { %>
+        <p style="color:red"><%= error.msg %> </p>
+    <% }) %>
+    </div>
+    <% include ../partials/footer %>
+</body>
+</html>

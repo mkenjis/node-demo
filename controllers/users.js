@@ -1,4 +1,5 @@
 var crypto = require('../helper/crypto');
+var sess_helper = require('../helper/session_helper');
 
 exports.show = function(req,res){
     var i = 0;
@@ -13,14 +14,18 @@ exports.show = function(req,res){
             i = i+1;
         }, 
         function() {
-            res.render('users/show', { userList: userList, expressFlash: req.flash('success') });
+            sess_helper.current_user(req.session.user.user_email, function(user_logged) {
+                res.render('users/show', { user_logged: user_logged, userList: userList, expressFlash: req.flash('success') });
+            });
         });
     });
 };
 
 exports.new = function(req,res) {
     var errors = req.validationErrors() || [{ param: '', msg: '', value: '' }];
-    res.render('./users/new', {errors: errors});
+    sess_helper.current_user(req.session.user.user_email, function(user_logged) {
+        res.render('users/new', { user_logged: user_logged, errors: errors});    
+    });
 };
 
 exports.create = function(req,res) {
@@ -30,18 +35,23 @@ exports.create = function(req,res) {
     req.checkBody("user_password", "Enter a valid password").notEmpty().isLength({min:6, max:10});
     
     var errors = req.validationErrors();
-    
+
     if (errors) {
-        res.render('./users/new', {errors: errors});
+        sess_helper.current_user(req.session.user.user_email, function(user_logged) {
+            res.render('users/new', { user_logged: user_logged, errors: errors});
+        });
+
     } else {
         var user = req.body;
 
         global.db.each("select count(*) as cnt from user_info where user_email = '" + user.user_email + "'", 
             function(err, row) {
                 if (row.cnt > 0) {
-                    req.flash('info', 'User already exists');
-                    res.redirect('/users/show');
-                    console.log("User already exists");
+                    req.flash('success', 'User email already exists');
+                    sess_helper.current_user(req.session.user.user_email, function(user_logged) {
+                        res.redirect('users/show');
+                    });
+                    console.log("User email already exists");
                 } else {
                     global.db.run('begin transaction');
                     global.db.run('insert into user_info(user_email,first_name,last_name,password) values (?,?,?,?)',
@@ -49,7 +59,9 @@ exports.create = function(req,res) {
                     global.db.run('end');
                     
                     req.flash('success', 'User successfully created');
-                    res.redirect('/users/show');
+                    sess_helper.current_user(req.session.user.user_email, function(user_logged) {
+                        res.redirect('users/show');      
+                    });
                     console.log("User successfully created");
                 }
             })
@@ -59,14 +71,17 @@ exports.create = function(req,res) {
 exports.edit = function(req,res) {
     var errors = req.validationErrors() || [{ param: '', msg: '', value: '' }];
     var user_email = req.params.id;
-    
+
     global.db.each("select user_email,first_name,last_name,password from user_info where user_email='" + user_email + "'", 
         function(err,row) {
-            res.render('users/edit', { iduser: row.user_email,
-                       prinome: row.first_name,
-                       ultnome: row.last_name,
-                       pwduser: row.password,
-                       errors: errors});
+            sess_helper.current_user(req.session.user.user_email, function(user_logged) {
+                res.render('users/edit', { user_logged: user_logged,
+                        iduser: row.user_email,
+                        prinome: row.first_name,
+                        ultnome: row.last_name,
+                        pwduser: row.password,
+                        errors: errors});
+            });
         });
 };
 
@@ -78,13 +93,17 @@ exports.update = function(req,res) {
     var errors = req.validationErrors();
     var user_email = req.params.id;
     var user = req.body;
-    
+
     if (errors) {
-        res.render('./users/edit', { iduser: user_email,
-                       prinome: user.first_name,
-                       ultnome: user.last_name,
-                       pwduser: user.user_password,
-                       errors: errors});
+        sess_helper.current_user(req.session.user.user_email, function(user_logged) {
+                res.render('users/edit', { user_logged: user_logged,
+                        iduser: user_email,
+                        prinome: user.first_name,
+                        ultnome: user.last_name,
+                        pwduser: user.user_password,
+                        errors: errors});   
+        });
+
     } else {
         var user_email = req.params.id;
         var user = req.body;
@@ -92,8 +111,10 @@ exports.update = function(req,res) {
         global.db.each("select count(*) as cnt from user_info where user_email = '" + user_email + "'", 
             function(err, row) {
                 if (row.cnt == 0) {
-                    req.flash('error', 'User does not exist');
-                    res.redirect('/users/show');
+                    req.flash('success', 'User does not exist');
+                    sess_helper.current_user(req.session.user.user_email, function(user_logged) {
+                        res.redirect('users/show');
+                    });
                     console.log("User does not exist");
                 } else {
                     global.db.run('begin transaction');
@@ -102,7 +123,9 @@ exports.update = function(req,res) {
                     global.db.run('end');
 
                     req.flash('success', 'User successfully updated');
-                    res.redirect('/users/show');
+                    sess_helper.current_user(req.session.user.user_email, function(user_logged) {
+                        res.redirect('show');
+                    });
                     console.log("User successfully updated");
                 }
             })
@@ -111,11 +134,14 @@ exports.update = function(req,res) {
 
 exports.delete = function(req,res) {
     var user_email = req.params.id;
+
     global.db.each("select count(*) as cnt from user_info where user_email = '" + user_email + "'", 
         function(err, row) {
             if (row.cnt == 0) {
-                req.flash('error', 'User does not exist');
-                res.redirect('/users/show');
+                req.flash('success', 'User does not exist');
+                sess_helper.current_user(req.session.user.user_email, function(user_logged) {
+                    res.redirect('users/show'); 
+                });
                 console.log("User does not exist");
             } else {
                 global.db.run('begin transaction');
@@ -123,7 +149,9 @@ exports.delete = function(req,res) {
                 global.db.run('end');
 
                 req.flash('success', 'User successfully deleted');
-                res.redirect('/users/show');
+                sess_helper.current_user(req.session.user.user_email, function(user_logged){
+                    res.redirect('users/show');
+                });
                 console.log("User successfully deleted");
             }
         })
