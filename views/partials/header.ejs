@@ -3,6 +3,9 @@
   <nav>
       <ul class="nav navbar-nav navbar-right">
           <li class="active"><a href="/">Home<span class="sr-only">(current)</span></a></li>
+          
+          <% console.log('header.user_logged = '+user_logged) %>
+          <% if (user_logged) { %>
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               Settings <b class="caret"></b>
@@ -19,21 +22,29 @@
             <ul class="dropdown-menu">
               <li><a href="#">Profile</li>
               <li class="divider"></li>
-              <li><a href='#'>Logout</a></li>
+              <li><a href='#'>Settings</a></li>
             </ul>
           </li>
+          <li><a href="/sessions/logout">Logout</a></li>
+          <% } else { %>
+          <li><a href="/sessions/login">Login</a></li>
+          <% } %>
           <li><a href="#">Help</a></li>
       </ul>
   </nav>
   </header>
 </div>
 <div class='row'>
-  <div class='col-md-2'>
-    <br>
-    <p>Current Logged User:</p>
-    <br>
-    <p><strong>Login: </strong></p>
-    <p>Name : </p>
-    <p>Role : </p>
-  </div>
-  <div class='col-md-6'>
+  <% if (user_logged) { %>
+    <div class='col-md-2'>
+      <br>
+      <p>Current Logged User:</p>
+      <br>
+      <p><strong>Login: </strong></p>
+      <p>Name : </p>
+      <p>Role : </p>
+    </div>
+    <div class='col-md-6'>
+  <% } else { %>
+    <div>
+  <% } %>

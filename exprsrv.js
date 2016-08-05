@@ -1,3 +1,7 @@
+global.user_logged = false;
+
+var crypto = require('./helper/crypto');
+
 var sqlite3 = require('sqlite3').verbose();
 global.db = new sqlite3.Database('mydb.db');
 
@@ -24,20 +28,30 @@ var path = require('path');
 staticpath = path.resolve( __dirname + '/views');
 
 var users = require('./controllers/users')
+var sessions = require('./controllers/sessions')
 
 app
 .get('/', function(req,res) {
+    user_logged = (req.session && req.session.user);
     res.render('static_pages/index');
 })
 .get('/help', function(req,res) {
+    user_logged = (req.session && req.session.user);
     res.send('This is Help page');
 })
 .get('/about', function(req,res) {
+    user_logged = (req.session && req.session.user);
     res.send('This is the About page');
 })
 .get('/contact', function(req,res) {
+    user_logged = (req.session && req.session.user);
     res.send('This is Contact page');
 })
+
+// routes for sessions
+.get('/sessions/login', sessions.login)
+.post('/sessions', sessions.create)
+.get('/sessions/logout', sessions.logout)
 
 // routes for users
 .get('/users/show', users.show)
@@ -45,7 +59,7 @@ app
 .post('/users', users.create)
 .get('/users/:id/edit', users.edit)
 .post('/users/:id', users.update)
-.get('/users/:id/delete', users.delete) 
+.get('/users/:id/delete', users.delete)
 
 //app.use(function(req,res,next) {
 //    console.log('new request');
