@@ -123,9 +123,7 @@ exports.update = function(req,res) {
                         pwduser: user.user_password,
                         errors: errors});   
             } else {
-                var user_email = req.params.id;
-                var user = req.body;
-                
+
                 global.db.each("select count(*) as cnt from user_info where user_email = '" + user_email + "'", 
                     function(err, row) {
                         if (row.cnt == 0) {
@@ -160,7 +158,7 @@ exports.delete = function(req,res) {
                 function(err, row) {
                     if (row.cnt == 0) {
                         req.flash('success', 'User does not exist');
-                        res.redirect('users/show'); 
+                        res.redirect('/users/show'); 
                         console.log("User does not exist");
                     } else {
                         global.db.run('begin transaction');
@@ -168,7 +166,7 @@ exports.delete = function(req,res) {
                         global.db.run('end');
         
                         req.flash('success', 'User successfully deleted');
-                        res.redirect('users/show');
+                        res.redirect('/users/show');
                         console.log("User successfully deleted");
                     };
                 });
